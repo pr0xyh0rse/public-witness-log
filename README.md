@@ -43,7 +43,7 @@ A future verifier can check:
 
 ## Private manifest schema, if later disclosed
 
-Private manifests are not published in this repository. If Fox later discloses a
+Private manifests are not published in this repository. If Hannah later discloses a
 private manifest for verification, each manifest entry should be interpretable
 without access to the original scripts.
 
