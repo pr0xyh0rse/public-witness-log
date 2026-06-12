@@ -49,13 +49,21 @@ templates/public-witness-template.md
 ## Daily flow
 
 From this repository:
-
 ```bash
 python3 scripts/make_public_witness.py --manifest /path/to/private/YYYY-MM-DD_manifest.jsonl
 python3 scripts/verify_chain.py
+# Optional external timestamp proof for the public witness file:
+ots stamp witnesses/YYYY/YYYY-MM-DD.md
 git add witnesses chain
 git commit -m "Witness digest YYYY-MM-DD"
 git push
+```
+
+OpenTimestamps note: a fresh `.ots` proof normally starts as a pending calendar attestation. After Bitcoin confirmation is available, run:
+
+```bash
+ots upgrade witnesses/YYYY/YYYY-MM-DD.md.ots
+ots verify witnesses/YYYY/YYYY-MM-DD.md.ots -f witnesses/YYYY/YYYY-MM-DD.md
 ```
 
 Optional, for cleared public project labels:
