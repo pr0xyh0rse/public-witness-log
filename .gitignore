@@ -1,0 +1,25 @@
+# Keep the public repo clean: no raw/private material here.
+.env
+.env.*
+*.local.env
+
+# Private/raw material must stay outside this repo. These are guardrails if someone drops files here by mistake.
+private/
+raw/
+artifacts/
+source-artifacts/
+local-manifests/
+manifests-private/
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.sqlite
+*.db
+*.log
+
+# Normal local clutter
+.DS_Store
+__pycache__/
+.pytest_cache/
