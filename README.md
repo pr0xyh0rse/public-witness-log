@@ -99,7 +99,7 @@ This is offline. It confirms that every proof commits to its adjacent witness an
 python3 scripts/manage_ots.py check
 ```
 
-This uses `ots upgrade -n`. It queries allowed calendars but does not change repository files. It is suitable for a periodic read-only maturity check.
+This uses `ots upgrade -n`. It queries allowed calendars but does not change repository files. It reports only an availability count and an opaque digest of the available proof set, not work labels. It is suitable for a periodic read-only maturity check.
 
 ### 3. Upgrade mature proofs safely
 

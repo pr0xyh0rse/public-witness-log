@@ -121,6 +121,7 @@ class OtsMaintenanceTests(unittest.TestCase):
             result = run_manage(repo, fake, "check")
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertIn("upgrade_available=1", result.stdout)
+            self.assertRegex(result.stdout, r"upgrade_set_sha256=[0-9a-f]{64}")
             self.assertEqual(proof.read_bytes(), before)
             self.assertFalse(Path(str(proof) + ".bak").exists())
 

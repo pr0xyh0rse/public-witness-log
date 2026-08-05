@@ -123,6 +123,7 @@ def command_check(args: argparse.Namespace) -> int:
     statuses = inspect_all(args.repo_root, args.ots_bin, args.timeout)
     errors = validate_statuses(statuses)
     available = 0
+    available_proofs: list[str] = []
     checked = 0
     for item in statuses:
         if item.error or item.digest != item.actual_digest or item.bitcoin_attested:
@@ -137,7 +138,15 @@ def command_check(args: argparse.Namespace) -> int:
             continue
         if re.search(r"Success! Timestamp (?:is )?complete", output):
             available += 1
-    print(f"proof_count={len(statuses)} pending_checked={checked} upgrade_available={available} errors={len(errors)}")
+            available_proofs.append(item.proof.relative_to(args.repo_root).as_posix())
+    upgrade_set_sha256 = hashlib.sha256(
+        "\n".join(sorted(available_proofs)).encode("utf-8")
+    ).hexdigest()
+    print(
+        f"proof_count={len(statuses)} pending_checked={checked} "
+        f"upgrade_available={available} upgrade_set_sha256={upgrade_set_sha256} "
+        f"errors={len(errors)}"
+    )
     for error in errors:
         print(f"FAIL: {error}")
     return 1 if errors or not statuses else 0
