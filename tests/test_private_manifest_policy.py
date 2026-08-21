@@ -14,7 +14,7 @@ SPEC.loader.exec_module(mpw)
 
 def source_policy(base: Path) -> dict:
     return {
-        "policy_id": "public-witness-cleared-work-roots/v2",
+        "policy_id": "public-witness-cleared-work-roots/v3",
         "denied_root_prefixes": [str(base / "private-den")],
         "roots": [
             {

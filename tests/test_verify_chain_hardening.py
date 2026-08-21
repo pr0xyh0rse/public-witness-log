@@ -173,6 +173,34 @@ class VerifyChainHardeningTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("unsupported manifest_schema", result.stdout + result.stderr)
 
+    def test_v3_eligibility_profile_is_allowlisted(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            row = add_entry(repo, "2026-01-01", "1" * 64, None)
+            method = {
+                "witness_format": "public-witness/v2",
+                "manifest_schema": "public-witness-active-work-watchdog/v3",
+                "eligibility_profile": "public-witness-cleared-work-roots/v3",
+                "generator_sha256": "a" * 64,
+            }
+            witness = repo / row["witness_file"]
+            text = witness.read_text(encoding="utf-8")
+            provenance = "".join(f"{key}: {value}\n" for key, value in method.items())
+            witness.write_text(
+                text.replace("hash_algorithm: SHA256\n", "hash_algorithm: SHA256\n" + provenance),
+                encoding="utf-8",
+            )
+            row.update(method)
+            row["witness_sha256"] = hashlib.sha256(witness.read_bytes()).hexdigest()
+            (repo / "chain").mkdir()
+            (repo / "chain/daily-chain.jsonl").write_text(
+                json.dumps(row) + "\n", encoding="utf-8"
+            )
+
+            result = run_verify(repo)
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
 
 if __name__ == "__main__":
     unittest.main()

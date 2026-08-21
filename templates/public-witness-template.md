@@ -8,7 +8,7 @@ This template is prospective. Historical witnesses retain their original format.
 hash_algorithm: SHA256
 witness_format: public-witness/v2
 manifest_schema: public-witness-active-work-watchdog/v3
-eligibility_profile: public-witness-cleared-work-roots/v2
+eligibility_profile: public-witness-cleared-work-roots/v3
 generator_sha256: <SHA256 of the exact generator bytes used>
 scope: selected private/local active-work witness manifest
 manifest_sha256: <SHA256 of the private/local manifest bytes>

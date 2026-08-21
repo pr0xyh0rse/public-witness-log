@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 EXPECTED_MANIFEST_SCHEMA = 'public-witness-active-work-watchdog/v3'
-EXPECTED_POLICY_ID = 'public-witness-cleared-work-roots/v2'
+EXPECTED_POLICY_ID = 'public-witness-cleared-work-roots/v3'
 WITNESS_FORMAT = 'public-witness/v2'
 GENERIC_SCOPE = 'selected private/local active-work witness manifest'
 PUBLIC_TRACKED_PATH_ALLOWLIST = (

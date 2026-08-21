@@ -29,7 +29,7 @@ def prepare_inputs(base: Path) -> tuple[Path, Path, Path]:
     root_file = base / "work-card.md"
     root_file.write_text("synthetic work card\n", encoding="utf-8")
     policy = {
-        "policy_id": "public-witness-cleared-work-roots/v2",
+        "policy_id": "public-witness-cleared-work-roots/v3",
         "denied_root_prefixes": [str(base / "private-den")],
         "forbidden_root_paths": [str(base)],
         "roots": [
@@ -101,7 +101,7 @@ class PublicWitnessV2Tests(unittest.TestCase):
             generator_sha = hashlib.sha256(SCRIPT.read_bytes()).hexdigest()
             self.assertIn("witness_format: public-witness/v2", witness)
             self.assertIn("manifest_schema: public-witness-active-work-watchdog/v3", witness)
-            self.assertIn("eligibility_profile: public-witness-cleared-work-roots/v2", witness)
+            self.assertIn("eligibility_profile: public-witness-cleared-work-roots/v3", witness)
             self.assertIn(f"generator_sha256: {generator_sha}", witness)
             self.assertIn(f"scope: {GENERIC_SCOPE}", witness)
             self.assertNotIn("work-card", witness)
@@ -110,7 +110,7 @@ class PublicWitnessV2Tests(unittest.TestCase):
             row = json.loads((repo / "chain/daily-chain.jsonl").read_text(encoding="utf-8"))
             self.assertEqual(row["witness_format"], "public-witness/v2")
             self.assertEqual(row["manifest_schema"], "public-witness-active-work-watchdog/v3")
-            self.assertEqual(row["eligibility_profile"], "public-witness-cleared-work-roots/v2")
+            self.assertEqual(row["eligibility_profile"], "public-witness-cleared-work-roots/v3")
             self.assertEqual(row["generator_sha256"], generator_sha)
 
     def test_non_generic_scope_is_rejected(self) -> None:

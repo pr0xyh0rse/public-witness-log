@@ -15,7 +15,10 @@ SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 GENERIC_SCOPE = "selected private/local active-work witness manifest"
 EXPECTED_WITNESS_FORMAT = "public-witness/v2"
 EXPECTED_MANIFEST_SCHEMA = "public-witness-active-work-watchdog/v3"
-EXPECTED_ELIGIBILITY_PROFILE = "public-witness-cleared-work-roots/v2"
+SUPPORTED_ELIGIBILITY_PROFILES = {
+    "public-witness-cleared-work-roots/v2",
+    "public-witness-cleared-work-roots/v3",
+}
 METHOD_FIELDS = (
     "witness_format",
     "manifest_schema",
@@ -239,7 +242,7 @@ def verify_repository(repo_root: Path) -> list[str]:
                     errors.append(f"{prefix}: unsupported witness_format")
                 if row.get("manifest_schema") != EXPECTED_MANIFEST_SCHEMA:
                     errors.append(f"{prefix}: unsupported manifest_schema")
-                if row.get("eligibility_profile") != EXPECTED_ELIGIBILITY_PROFILE:
+                if row.get("eligibility_profile") not in SUPPORTED_ELIGIBILITY_PROFILES:
                     errors.append(f"{prefix}: unsupported eligibility_profile")
                 if not _valid_sha(row.get("generator_sha256")):
                     errors.append(f"{prefix}: generator_sha256 is not SHA256")
