@@ -45,6 +45,10 @@ def make_fake_ots(path: Path) -> None:
                 if "-n" in args:
                     if b"AVAILABLE" in proof.read_bytes():
                         print("Success! Timestamp is complete")
+                    elif b"PENDING_EXIT1" in proof.read_bytes():
+                        print("Calendar https://calendar.example: Pending confirmation in Bitcoin blockchain")
+                        print("Failed! Timestamp not complete")
+                        raise SystemExit(1)
                     else:
                         print("Calendar pending")
                     raise SystemExit(0)
@@ -124,6 +128,24 @@ class OtsMaintenanceTests(unittest.TestCase):
             self.assertRegex(result.stdout, r"upgrade_set_sha256=[0-9a-f]{64}")
             self.assertEqual(proof.read_bytes(), before)
             self.assertFalse(Path(str(proof) + ".bak").exists())
+
+    def test_check_accepts_recognized_pending_exit_one_as_not_mature(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            repo = base / "repo"
+            repo.mkdir()
+            fake = base / "ots"
+            make_fake_ots(fake)
+            proof = add_proof(repo, "2026-01-01", b"PENDING_EXIT1")
+            before = proof.read_bytes()
+
+            result = run_manage(repo, fake, "check")
+
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertIn("pending_checked=1", result.stdout)
+            self.assertIn("upgrade_available=0", result.stdout)
+            self.assertIn("errors=0", result.stdout)
+            self.assertEqual(proof.read_bytes(), before)
 
     def test_upgrade_preserves_external_backup_and_leaves_no_repo_bak(self) -> None:
         with tempfile.TemporaryDirectory() as td:

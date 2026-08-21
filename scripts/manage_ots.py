@@ -14,6 +14,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 DIGEST_RE = re.compile(r"^File sha256 hash: ([0-9a-f]{64})$", re.MULTILINE)
+PENDING_DRY_RUN_LINE_RE = re.compile(
+    r"^Calendar https://[^ ]+: Pending confirmation in Bitcoin blockchain$"
+)
 
 
 @dataclass(frozen=True)
@@ -46,6 +49,21 @@ def run_ots(ots_bin: str, args: list[str], timeout: int) -> subprocess.Completed
         capture_output=True,
         timeout=timeout,
         check=False,
+    )
+
+
+def is_recognized_pending_dry_run(result: subprocess.CompletedProcess[str]) -> bool:
+    if result.returncode != 1:
+        return False
+    lines = [
+        line.strip()
+        for line in (result.stdout + result.stderr).splitlines()
+        if line.strip()
+    ]
+    return (
+        len(lines) >= 2
+        and lines[-1] == "Failed! Timestamp not complete"
+        and all(PENDING_DRY_RUN_LINE_RE.fullmatch(line) for line in lines[:-1])
     )
 
 
@@ -131,7 +149,7 @@ def command_check(args: argparse.Namespace) -> int:
         checked += 1
         result = run_ots(args.ots_bin, ["upgrade", "-n", str(item.proof)], args.timeout)
         output = result.stdout + result.stderr
-        if result.returncode != 0:
+        if result.returncode != 0 and not is_recognized_pending_dry_run(result):
             errors.append(
                 f"{item.proof}: dry-run upgrade exited {result.returncode}: {output.strip()}"
             )
